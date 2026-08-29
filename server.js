@@ -2,41 +2,31 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const express = require("express");
-const Database = require("better-sqlite3");
 const { rubric, criterionIds } = require("./rubric");
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-const dbPath = process.env.DB_PATH || path.join(__dirname, "data", "rubric.sqlite");
+const dataPath = process.env.DATA_PATH || process.env.DB_PATH || path.join(__dirname, "data", "rubric.json");
 const adminPassword = process.env.ADMIN_PASSWORD || "";
 
-fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-const db = new Database(dbPath);
-db.pragma("journal_mode = WAL");
-db.pragma("foreign_keys = ON");
-db.exec(`
-  CREATE TABLE IF NOT EXISTS submissions (
-    id TEXT PRIMARY KEY,
-    edit_token_hash TEXT NOT NULL,
-    poster_number TEXT NOT NULL,
-    judge_name TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted')),
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    submitted_at TEXT
-  );
+fs.mkdirSync(path.dirname(dataPath), { recursive: true });
 
-  CREATE TABLE IF NOT EXISTS answers (
-    submission_id TEXT NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
-    criterion_id TEXT NOT NULL,
-    response TEXT CHECK (response IN ('yes', 'no') OR response IS NULL),
-    comment TEXT NOT NULL DEFAULT '',
-    PRIMARY KEY (submission_id, criterion_id)
-  );
+function loadStore() {
+  if (!fs.existsSync(dataPath)) return { schemaVersion: 1, submissions: [] };
+  const parsed = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+  if (!parsed || !Array.isArray(parsed.submissions)) throw new Error(`Invalid rubric data file: ${dataPath}`);
+  return parsed;
+}
 
-  CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status);
-  CREATE INDEX IF NOT EXISTS idx_submissions_poster ON submissions(poster_number);
-`);
+const store = loadStore();
+
+function persistStore() {
+  const temporaryPath = `${dataPath}.${process.pid}.tmp`;
+  fs.writeFileSync(temporaryPath, `${JSON.stringify(store, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  fs.renameSync(temporaryPath, dataPath);
+}
+
+if (!fs.existsSync(dataPath)) persistStore();
 
 app.disable("x-powered-by");
 app.use(express.json({ limit: "200kb" }));
@@ -63,10 +53,7 @@ function cleanText(value, maxLength) {
 }
 
 function getSubmission(id) {
-  const submission = db.prepare("SELECT * FROM submissions WHERE id = ?").get(id);
-  if (!submission) return null;
-  const answers = db.prepare("SELECT criterion_id, response, comment FROM answers WHERE submission_id = ?").all(id);
-  return { ...submission, answers };
+  return store.submissions.find((submission) => submission.id === id) || null;
 }
 
 function publicSubmission(submission) {
@@ -114,14 +101,20 @@ app.post("/api/submissions", (req, res) => {
   const id = crypto.randomUUID();
   const token = crypto.randomBytes(32).toString("base64url");
   const now = new Date().toISOString();
-  const insert = db.transaction(() => {
-    db.prepare("INSERT INTO submissions (id, edit_token_hash, poster_number, judge_name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)")
-      .run(id, hash(token), posterNumber, judgeName, now, now);
-    const statement = db.prepare("INSERT INTO answers (submission_id, criterion_id) VALUES (?, ?)");
-    for (const criterionId of criterionIds) statement.run(id, criterionId);
-  });
-  insert();
-  res.status(201).json({ id, token, submission: publicSubmission(getSubmission(id)) });
+  const submission = {
+    id,
+    edit_token_hash: hash(token),
+    poster_number: posterNumber,
+    judge_name: judgeName,
+    status: "draft",
+    created_at: now,
+    updated_at: now,
+    submitted_at: null,
+    answers: criterionIds.map((criterionId) => ({ criterion_id: criterionId, response: null, comment: "" }))
+  };
+  store.submissions.push(submission);
+  persistStore();
+  res.status(201).json({ id, token, submission: publicSubmission(submission) });
 });
 
 app.get("/api/submissions/:id", (req, res) => {
@@ -155,22 +148,24 @@ app.put("/api/submissions/:id", (req, res) => {
   }
 
   const now = new Date().toISOString();
-  const save = db.transaction(() => {
-    db.prepare("UPDATE submissions SET poster_number = ?, judge_name = ?, status = ?, updated_at = ?, submitted_at = ? WHERE id = ?")
-      .run(posterNumber, judgeName, requestedStatus, now, requestedStatus === "submitted" ? now : null, submission.id);
-    const update = db.prepare("UPDATE answers SET response = ?, comment = ? WHERE submission_id = ? AND criterion_id = ?");
-    for (const criterionId of criterionIds) {
-      const answer = answerMap.get(criterionId) || { response: null, comment: "" };
-      update.run(answer.response, answer.comment, submission.id, criterionId);
-    }
+  submission.poster_number = posterNumber;
+  submission.judge_name = judgeName;
+  submission.status = requestedStatus;
+  submission.updated_at = now;
+  submission.submitted_at = requestedStatus === "submitted" ? now : null;
+  submission.answers = criterionIds.map((criterionId) => {
+    const answer = answerMap.get(criterionId) || { response: null, comment: "" };
+    return { criterion_id: criterionId, response: answer.response, comment: answer.comment };
   });
-  save();
-  res.json({ submission: publicSubmission(getSubmission(submission.id)) });
+  persistStore();
+  res.json({ submission: publicSubmission(submission) });
 });
 
 app.get("/api/admin/submissions", requireAdmin, (_req, res) => {
-  const rows = db.prepare("SELECT * FROM submissions ORDER BY COALESCE(submitted_at, updated_at) DESC").all();
-  res.json({ submissions: rows.map((row) => publicSubmission({ ...row, answers: db.prepare("SELECT criterion_id, response, comment FROM answers WHERE submission_id = ?").all(row.id) })) });
+  const submissions = [...store.submissions]
+    .sort((a, b) => String(b.submitted_at || b.updated_at).localeCompare(String(a.submitted_at || a.updated_at)))
+    .map(publicSubmission);
+  res.json({ submissions });
 });
 
 function csvCell(value) {
@@ -178,17 +173,17 @@ function csvCell(value) {
 }
 
 app.get("/api/admin/export.csv", requireAdmin, (_req, res) => {
-  const rows = db.prepare(`
-    SELECT s.poster_number, s.judge_name, s.status, s.created_at, s.submitted_at,
-           a.criterion_id, a.response, a.comment
-    FROM submissions s JOIN answers a ON a.submission_id = s.id
-    ORDER BY s.poster_number COLLATE NOCASE, s.judge_name COLLATE NOCASE, a.rowid
-  `).all();
+  const submissions = [...store.submissions].sort((a, b) =>
+    a.poster_number.localeCompare(b.poster_number, undefined, { numeric: true, sensitivity: "base" }) ||
+    a.judge_name.localeCompare(b.judge_name, undefined, { sensitivity: "base" })
+  );
   const criterionText = new Map(rubric.flatMap((section) => section.criteria.map((criterion) => [criterion.id, criterion.text])));
   const header = ["Poster Number", "Judge Name", "Status", "Created At", "Submitted At", "Criterion ID", "Criterion", "Response", "Comment"];
   const lines = [header.map(csvCell).join(",")];
-  for (const row of rows) {
-    lines.push([row.poster_number, row.judge_name, row.status, row.created_at, row.submitted_at, row.criterion_id, criterionText.get(row.criterion_id), row.response, row.comment].map(csvCell).join(","));
+  for (const submission of submissions) {
+    for (const answer of submission.answers) {
+      lines.push([submission.poster_number, submission.judge_name, submission.status, submission.created_at, submission.submitted_at, answer.criterion_id, criterionText.get(answer.criterion_id), answer.response, answer.comment].map(csvCell).join(","));
+    }
   }
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", `attachment; filename="biob90-poster-rubric-${new Date().toISOString().slice(0, 10)}.csv"`);
@@ -201,7 +196,7 @@ app.use((err, _req, res, _next) => {
 });
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`BIOB90 rubric listening on port ${port}; database: ${dbPath}`);
+  console.log(`BIOB90 rubric listening on port ${port}; data file: ${dataPath}`);
   if (!adminPassword) console.warn("ADMIN_PASSWORD is not set. Organizer access is disabled.");
 });
 

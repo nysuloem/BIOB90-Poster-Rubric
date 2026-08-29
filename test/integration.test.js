@@ -29,7 +29,7 @@ test("complete judging and organizer workflow", async (t) => {
   const baseUrl = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(port), DB_PATH: path.join(tempDir, "test.sqlite"), ADMIN_PASSWORD: "test-secret" },
+    env: { ...process.env, PORT: String(port), DATA_PATH: path.join(tempDir, "test.json"), ADMIN_PASSWORD: "test-secret" },
     stdio: "ignore"
   });
   t.after(() => {
@@ -84,4 +84,7 @@ test("complete judging and organizer workflow", async (t) => {
   assert.equal(csvResponse.status, 200);
   assert.match(csv, /Helpful test comment/);
   assert.equal(csv.trim().split(/\r?\n/).length, 21);
+  const stored = JSON.parse(fs.readFileSync(path.join(tempDir, "test.json"), "utf8"));
+  assert.equal(stored.submissions.length, 1);
+  assert.equal(stored.submissions[0].status, "submitted");
 });
