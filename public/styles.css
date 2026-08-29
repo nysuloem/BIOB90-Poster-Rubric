@@ -103,6 +103,50 @@ textarea { min-height: 92px; resize: vertical; }
 footer { padding: 22px; color: var(--muted); text-align: center; font-size: .85rem; }
 footer a { color: inherit; }
 
+/* Role landing page */
+.landing-header .header-inner { padding-top: 54px; padding-bottom: 48px; text-align: center; }
+.landing-shell { max-width: 900px; }
+.landing-intro { margin: 0 auto 24px; text-align: center; }
+.landing-intro h2 { font-size: clamp(1.7rem, 4vw, 2.35rem); }
+.landing-intro p { color: var(--muted); }
+.role-grid { display: grid; gap: 15px; }
+.role-card {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;
+  padding: 24px 26px; color: inherit; text-decoration: none; transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.role-card:hover { transform: translateY(-2px); border-color: #9dbbc0; box-shadow: 0 14px 36px rgba(16, 47, 79, .14); }
+.role-card:focus-visible { outline: 3px solid rgba(22, 125, 130, .32); outline-offset: 3px; }
+.role-icon {
+  display: grid; width: 52px; height: 52px; place-items: center; border-radius: 14px;
+  color: #fff; background: var(--teal); font-family: Georgia, serif; font-size: 1.4rem; font-weight: 800;
+}
+.role-icon.judge { background: var(--navy); }
+.role-icon.instructor { color: var(--navy-deep); background: var(--gold); }
+.role-content strong { display: block; margin-bottom: 3px; color: var(--navy); font-family: Georgia, serif; font-size: 1.35rem; }
+.role-content > span { color: var(--muted); }
+.role-arrow { color: var(--teal); font-size: 1.65rem; font-weight: 700; }
+
+/* Student rubric */
+.compact-header .header-inner { padding-top: 32px; padding-bottom: 28px; }
+.compact-header h1 { font-size: clamp(1.9rem, 4vw, 2.65rem); }
+.page-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+.back-link { display: inline-block; color: var(--teal); font-weight: 750; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+.student-intro { padding: 26px; }
+.student-intro p { max-width: 780px; margin-bottom: 0; }
+.student-criteria-list { display: grid; gap: 11px; }
+.student-criterion { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 20px 22px; }
+.student-criterion .criterion-number { margin: 0; }
+.yes-no-label { padding: 6px 10px; border-radius: 7px; color: var(--navy); background: var(--teal-light); font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.loading-panel { padding: 40px; color: var(--muted); text-align: center; }
+
+/* Judge lookup */
+.judge-lookup-panel { margin-top: 20px; }
+.lookup-form { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end; margin-top: 26px; }
+.not-found-message { margin-top: 22px; padding: 16px 18px; border: 1px solid #e2b3b3; border-radius: 9px; color: var(--danger); background: #fff3f3; }
+.not-found-message strong { font-size: 1.04rem; }
+.not-found-message p { margin: 2px 0 0; color: #743c3c; }
+
 /* Admin */
 .admin-login { max-width: 520px; }
 .admin-login form { display: flex; gap: 10px; margin-top: 22px; }
@@ -138,6 +182,21 @@ th { color: var(--navy); background: #edf2f5; font-size: .8rem; letter-spacing: 
   .submit-panel .error-message { grid-column: 1; }
   .summary-grid { grid-template-columns: 1fr; }
   .admin-login form { flex-direction: column; }
+  .role-card { grid-template-columns: auto 1fr; padding: 20px 18px; }
+  .role-arrow { display: none; }
+  .student-criterion { grid-template-columns: auto 1fr; align-items: start; }
+  .student-criterion .yes-no-label { grid-column: 2; justify-self: start; }
+  .lookup-form { grid-template-columns: 1fr; }
+  .page-actions { align-items: flex-start; flex-direction: column; }
+}
+
+@media print {
+  .site-header { color: #000; background: #fff; border-bottom: 2px solid #000; }
+  .site-header .eyebrow, .site-header p { color: #333; }
+  .page-actions, footer { display: none; }
+  .page-shell { width: 100%; margin: 20px 0; }
+  .panel { box-shadow: none; }
+  .student-criterion { break-inside: avoid; }
 }
 
 @media (prefers-reduced-motion: reduce) {

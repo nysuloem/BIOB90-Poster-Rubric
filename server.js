@@ -93,6 +93,12 @@ function requireAdmin(req, res, next) {
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.get("/api/rubric", (_req, res) => res.json({ title: "BIOB90 Biology Integrative Research Poster Project", sections: rubric, totalCriteria: criterionIds.length }));
 
+app.post("/api/judges/lookup", (req, res) => {
+  const judgeName = cleanText(req.body.judgeName, 120);
+  if (!judgeName) return res.status(400).json({ error: "Please enter your full name." });
+  res.status(404).json({ error: "Judge not found." });
+});
+
 app.post("/api/submissions", (req, res) => {
   const posterNumber = cleanText(req.body.posterNumber, 80);
   const judgeName = cleanText(req.body.judgeName, 120);

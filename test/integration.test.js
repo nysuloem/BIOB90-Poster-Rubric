@@ -43,6 +43,18 @@ test("complete judging and organizer workflow", async (t) => {
   assert.equal(result.data.totalCriteria, 20);
   const criterionIds = result.data.sections.flatMap((section) => section.criteria.map((criterion) => criterion.id));
 
+  const landingPage = await fetch(`${baseUrl}/`);
+  assert.match(await landingPage.text(), /How are you using the rubric/);
+  const studentPage = await fetch(`${baseUrl}/student.html`);
+  assert.match(await studentPage.text(), /Student view/);
+  result = await json(baseUrl, "/api/judges/lookup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ judgeName: "Future Judge" })
+  });
+  assert.equal(result.response.status, 404);
+  assert.equal(result.data.error, "Judge not found.");
+
   result = await json(baseUrl, "/api/submissions", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

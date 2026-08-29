@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102f4f">
+  <title>Judge Access · BIOB90 Poster Rubric</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header compact-header">
+    <div class="header-inner">
+      <div class="eyebrow">BIOB90 · Judge access</div>
+      <h1>Find Your Assignment</h1>
+      <p>Biology Integrative Research Poster Project</p>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <a class="back-link" href="/">← Return to role selection</a>
+    <section class="panel intro-panel judge-lookup-panel">
+      <span class="step-label">Judge identification</span>
+      <h2>Enter your name</h2>
+      <p>Enter your full name exactly as it appears in the judging schedule.</p>
+      <form id="judge-lookup-form" class="lookup-form">
+        <label>
+          <span>Judge’s full name</span>
+          <input id="judge-lookup-name" name="judgeName" maxlength="120" autocomplete="name" required>
+        </label>
+        <button class="primary-button" type="submit">Find my assignment</button>
+      </form>
+      <div id="judge-not-found" class="not-found-message" role="alert" hidden>
+        <strong>Judge not found</strong>
+        <p>We could not find a judging assignment under that name.</p>
+      </div>
+    </section>
+  </main>
+  <footer><a href="/">Return to role selection</a></footer>
+  <script src="/judge.js" defer></script>
+</body>
+</html>

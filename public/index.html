@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header landing-header">
     <div class="header-inner">
       <div class="eyebrow">University of Toronto Scarborough</div>
       <h1>BIOB90 Poster Rubric</h1>
@@ -16,64 +16,43 @@
     </div>
   </header>
 
-  <main class="page-shell">
-    <section id="intro" class="panel intro-panel">
-      <span class="step-label">Judge information</span>
-      <h2>Begin a poster review</h2>
-      <p>Your responses are saved automatically as you work. Please leave as many comments as possible to help students improve their work.</p>
-      <form id="start-form" class="metadata-grid">
-        <label>
-          <span>Group / Poster #</span>
-          <input id="poster-number" name="posterNumber" maxlength="80" autocomplete="off" required>
-        </label>
-        <label>
-          <span>Judge’s name</span>
-          <input id="judge-name" name="judgeName" maxlength="120" autocomplete="name" required>
-        </label>
-        <button class="primary-button" type="submit">Begin review</button>
-      </form>
-      <div id="resume-note" class="resume-note" hidden>
-        <p>You have an unfinished review on this device.</p>
-        <button id="resume-button" class="secondary-button" type="button">Resume review</button>
-        <button id="discard-button" class="text-button" type="button">Start a new review</button>
-      </div>
-      <p id="intro-error" class="error-message" role="alert"></p>
+  <main class="page-shell landing-shell">
+    <section class="landing-intro">
+      <span class="step-label">Welcome</span>
+      <h2>How are you using the rubric?</h2>
+      <p>Choose your role to open the appropriate area.</p>
     </section>
 
-    <section id="review" hidden>
-      <div class="review-toolbar panel">
-        <div>
-          <span class="step-label">Current review</span>
-          <h2><span id="current-poster"></span> <span class="divider">·</span> <span id="current-judge"></span></h2>
-        </div>
-        <div class="score-box">
-          <span>Yes responses</span>
-          <strong><span id="yes-score">0</span> / <span id="total-score">20</span></strong>
-        </div>
-      </div>
-      <div class="progress-track" aria-hidden="true"><div id="progress-bar"></div></div>
-      <p id="save-status" class="save-status" aria-live="polite">All changes saved</p>
-      <form id="rubric-form"></form>
-      <div class="submit-panel panel">
-        <div>
-          <h2>Ready to submit?</h2>
-          <p>All 20 criteria require a Yes or No response. Comments are strongly encouraged.</p>
-        </div>
-        <button id="submit-review" class="primary-button" type="button">Submit completed review</button>
-        <p id="review-error" class="error-message" role="alert"></p>
-      </div>
-    </section>
+    <nav class="role-grid" aria-label="Choose your role">
+      <a class="role-card panel" href="/student.html">
+        <span class="role-icon" aria-hidden="true">S</span>
+        <span class="role-content">
+          <strong>Student</strong>
+          <span>View the complete poster rubric and understand how your work will be evaluated.</span>
+        </span>
+        <span class="role-arrow" aria-hidden="true">→</span>
+      </a>
 
-    <section id="success" class="panel success-panel" hidden>
-      <div class="success-icon">✓</div>
-      <span class="step-label">Review submitted</span>
-      <h2>Thank you for your feedback</h2>
-      <p>Your rubric has been stored successfully.</p>
-      <button id="another-review" class="primary-button" type="button">Review another poster</button>
-    </section>
+      <a class="role-card panel" href="/judge.html">
+        <span class="role-icon judge" aria-hidden="true">J</span>
+        <span class="role-content">
+          <strong>Judge</strong>
+          <span>Find your judging assignment and complete an assigned poster review.</span>
+        </span>
+        <span class="role-arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="role-card panel" href="/admin.html">
+        <span class="role-icon instructor" aria-hidden="true">I</span>
+        <span class="role-content">
+          <strong>Course instructor</strong>
+          <span>Access the password-protected organizer dashboard and submitted results.</span>
+        </span>
+        <span class="role-arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
   </main>
 
-  <footer><a href="/admin.html">Organizer dashboard</a></footer>
-  <script src="/app.js" defer></script>
+  <footer>BIOB90 · Biology Integrative Research Poster Project</footer>
 </body>
 </html>

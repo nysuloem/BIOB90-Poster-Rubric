@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102f4f">
+  <title>Student Poster Rubric · BIOB90</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header compact-header">
+    <div class="header-inner">
+      <div class="eyebrow">BIOB90 · Student view</div>
+      <h1>Poster Rubric</h1>
+      <p>Biology Integrative Research Poster Project</p>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="page-actions">
+      <a class="back-link" href="/">← Return to role selection</a>
+      <button class="secondary-button print-button" type="button" onclick="window.print()">Print rubric</button>
+    </div>
+
+    <section class="panel student-intro">
+      <span class="step-label">How your poster will be evaluated</span>
+      <h2>Use this rubric while developing your poster</h2>
+      <p>Judges will select <strong>Yes</strong> or <strong>No</strong> for each of the 20 criteria and may leave comments to help you improve your work.</p>
+    </section>
+
+    <div id="student-rubric" aria-live="polite">
+      <div class="panel loading-panel">Loading rubric…</div>
+    </div>
+    <p id="student-error" class="error-message" role="alert"></p>
+  </main>
+  <footer><a href="/">Return to role selection</a></footer>
+  <script src="/student.js" defer></script>
+</body>
+</html>
