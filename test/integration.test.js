@@ -46,7 +46,9 @@ test("complete judging and organizer workflow", async (t) => {
   const landingPage = await fetch(`${baseUrl}/`);
   assert.match(await landingPage.text(), /How are you using the rubric/);
   const studentPage = await fetch(`${baseUrl}/student.html`);
-  assert.match(await studentPage.text(), /Student view/);
+  const studentHtml = await studentPage.text();
+  assert.match(studentHtml, /Student view/);
+  assert.match(studentHtml, /at least 16 of the 20 criteria/);
   result = await json(baseUrl, "/api/judges/lookup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

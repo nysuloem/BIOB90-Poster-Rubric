@@ -134,6 +134,17 @@ footer a { color: inherit; }
 .back-link:hover { text-decoration: underline; }
 .student-intro { padding: 26px; }
 .student-intro p { max-width: 780px; margin-bottom: 0; }
+.passing-requirement {
+  display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;
+  margin-top: 22px; padding: 17px 19px; border: 1px solid #d2a63d; border-left: 5px solid var(--gold);
+  border-radius: 10px; background: #fff9e9;
+}
+.requirement-number {
+  display: grid; min-width: 74px; min-height: 58px; padding: 8px; place-items: center;
+  border-radius: 9px; color: var(--navy-deep); background: var(--gold); font-size: 1.25rem; font-weight: 900;
+}
+.passing-requirement strong { color: var(--navy); }
+.passing-requirement p { margin: 2px 0 0; color: #4f4939; }
 .student-criteria-list { display: grid; gap: 11px; }
 .student-criterion { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 20px 22px; }
 .student-criterion .criterion-number { margin: 0; }
@@ -188,6 +199,8 @@ th { color: var(--navy); background: #edf2f5; font-size: .8rem; letter-spacing: 
   .student-criterion .yes-no-label { grid-column: 2; justify-self: start; }
   .lookup-form { grid-template-columns: 1fr; }
   .page-actions { align-items: flex-start; flex-direction: column; }
+  .passing-requirement { grid-template-columns: 1fr; }
+  .requirement-number { justify-self: start; min-height: auto; }
 }
 
 @media print {
