@@ -20,7 +20,7 @@ Open `http://localhost:3000`. The organizer dashboard is at `http://localhost:30
 3. Add these service variables:
    - `DATA_PATH=/data/rubric.json`
    - `ADMIN_PASSWORD=` followed by a strong password known only to organizers
-4. Railway detects the Node app and runs `npm start`. Generate a public domain from the service settings.
+4. Railway detects the included Dockerfile and runs the app with the official Node 22 runtime. Generate a public domain from the service settings.
 
 The `PORT` variable is supplied by Railway automatically. Do not store the admin password in this repository.
 
