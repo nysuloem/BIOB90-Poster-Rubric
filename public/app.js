@@ -41,7 +41,7 @@ function renderRubric() {
         <article class="criterion-card panel" data-criterion="${criterion.id}">
           <div>
             <span class="criterion-number">${criterion.number}</span>
-            <p class="criterion-text">${criterion.text}</p>
+            <p class="criterion-text">${criterion.html || criterion.text}</p>
           </div>
           <div class="answer-side">
             <fieldset class="choice-group" aria-label="Response for criterion ${criterion.number}">

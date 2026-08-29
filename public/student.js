@@ -13,7 +13,7 @@ function renderRubric(data) {
         ${section.criteria.map((criterion) => `
           <article class="panel student-criterion">
             <span class="criterion-number">${criterion.number}</span>
-            <p class="criterion-text">${criterion.text}</p>
+            <p class="criterion-text">${criterion.html || criterion.text}</p>
             <span class="yes-no-label" aria-label="Judged Yes or No">Yes / No</span>
           </article>
         `).join("")}

@@ -302,7 +302,10 @@ input::placeholder, textarea::placeholder { color: #6f8499; }
   background: transparent;
   font-size: 1.1rem;
 }
+.requirement-number strong { color: inherit; font-size: 1.12rem; line-height: 1; }
+.requirement-number small { color: #c8b955; font-size: .65rem; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
 .passing-requirement strong { color: #f3f6fa; }
+.passing-requirement .requirement-number strong { color: inherit; }
 .passing-requirement p { color: #c3cbd3; }
 .section-heading { margin-top: 44px; border-bottom: 1px solid #294864; padding: 0 0 12px; }
 .section-heading p { color: #93a7bb; margin-bottom: 0; }
@@ -320,6 +323,7 @@ input::placeholder, textarea::placeholder { color: #6f8499; }
   color: #8bd4e4;
   background: transparent;
 }
+.criterion-emphasis { color: #6fc7ea; font-weight: 800; }
 .yes-no-label {
   border: 1px solid #365a77;
   border-radius: 2px;
@@ -392,6 +396,7 @@ footer { border-top: 1px solid #1d3955; color: #7890a6; }
   .section-heading p, .passing-requirement p { color: #333; }
   .passing-requirement { background: #fff; }
   .passing-requirement strong { color: #111; }
+  .criterion-emphasis { color: #004f69; }
   .student-criterion { break-inside: avoid; }
 }
 

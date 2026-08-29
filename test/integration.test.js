@@ -42,13 +42,17 @@ test("complete judging and organizer workflow", async (t) => {
   assert.equal(result.response.status, 200);
   assert.equal(result.data.totalCriteria, 20);
   const criterionIds = result.data.sections.flatMap((section) => section.criteria.map((criterion) => criterion.id));
+  const emphasizedCriteria = result.data.sections.flatMap((section) => section.criteria).filter((criterion) => criterion.html);
+  assert.equal(emphasizedCriteria.length, 2);
+  assert.match(emphasizedCriteria[0].html, /criterion-emphasis/);
 
   const landingPage = await fetch(`${baseUrl}/`);
   assert.match(await landingPage.text(), /How are you using the rubric/);
   const studentPage = await fetch(`${baseUrl}/student.html`);
   const studentHtml = await studentPage.text();
   assert.match(studentHtml, /Student view/);
-  assert.match(studentHtml, /at least 16 of the 20 criteria/);
+  assert.match(studentHtml, /two judges/);
+  assert.match(studentHtml, /16 of the 20 criteria from each of the two judges/);
   result = await json(baseUrl, "/api/judges/lookup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

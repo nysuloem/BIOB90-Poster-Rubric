@@ -7,9 +7,15 @@ const sections = [
       "A statement of the group’s novel insight is clearly visible and stands out above all other content on the poster.",
       "The statement of the group’s novel insight is written in plain, conversational language, thereby reducing the need to process its meaning further and making it understandable to a non-expert on the topic.",
       "The group’s novel insight provides a new understanding of the topic being investigated, reflecting that the group has explored their topic in an original and unique way.",
-      "i) The group’s novel insight clearly reflects the integration of information from three biological subdisciplines; or ii) the group’s novel insight clearly reflects the integration of information from three distinct organismal groups; or iii) the group’s novel insight clearly reflects the concept of Two-Eyed Seeing, integrating both Indigenous and Western scientific perspectives.",
+      {
+        text: "i) The group’s novel insight clearly reflects the integration of information from three biological subdisciplines; or ii) the group’s novel insight clearly reflects the integration of information from three distinct organismal groups; or iii) the group’s novel insight clearly reflects the concept of Two-Eyed Seeing, integrating both Indigenous and Western scientific perspectives.",
+        html: "i) The group’s novel insight clearly reflects the integration of information from <strong class=\"criterion-emphasis\">three biological subdisciplines</strong>; or ii) the group’s novel insight clearly reflects the integration of information from <strong class=\"criterion-emphasis\">three distinct organismal groups</strong>; or iii) the group’s novel insight clearly reflects the concept of <strong class=\"criterion-emphasis\">Two-Eyed Seeing</strong>, integrating both <strong class=\"criterion-emphasis\">Indigenous and Western scientific perspectives</strong>."
+      },
       "The group’s novel insight is well-supported by research from valid sources (i.e., primary and secondary peer-reviewed articles).",
-      "The supporting research clearly spans three biological subdisciplines or three distinct organismal groups or both Indigenous and Western scientific perspectives.",
+      {
+        text: "The supporting research clearly spans three biological subdisciplines or three distinct organismal groups or both Indigenous and Western scientific perspectives.",
+        html: "The supporting research clearly spans <strong class=\"criterion-emphasis\">three biological subdisciplines</strong> or <strong class=\"criterion-emphasis\">three distinct organismal groups</strong> or both <strong class=\"criterion-emphasis\">Indigenous and Western scientific perspectives</strong>."
+      },
       "The supporting research is presented in a clear manner and can be easily understood even by a non-expert on the topic.",
       "The amount of supporting research displayed on the poster is appropriate; that is, there is enough information provided to substantiate the group’s novel insight, but not so much information that it takes more than a few minutes to read, causing the information to become “noise”.",
       "All factual claims and data on the poster are supported by an in-text citation.",
@@ -38,10 +44,10 @@ const sections = [
 let index = 0;
 const rubric = sections.map((section) => ({
   ...section,
-  criteria: section.criteria.map((text) => ({
+  criteria: section.criteria.map((item) => ({
+    ...(typeof item === "string" ? { text: item } : item),
     id: `${section.id}-${++index}`,
-    number: index,
-    text
+    number: index
   }))
 }));
 
