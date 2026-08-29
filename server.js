@@ -8,7 +8,7 @@ const { rubric, criterionIds } = require("./rubric");
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const dbPath = process.env.DB_PATH || path.join(__dirname, "data", "rubric.sqlite");
-const adminPassword = process.env.ADMIN_PASSWORD || "change-me";
+const adminPassword = process.env.ADMIN_PASSWORD || "";
 
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
@@ -92,6 +92,9 @@ function verifyEditToken(req, submission) {
 }
 
 function requireAdmin(req, res, next) {
+  if (!adminPassword) {
+    return res.status(503).json({ error: "Organizer access has not been configured." });
+  }
   const authorization = req.get("Authorization") || "";
   const password = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!password || !safeEqual(password, adminPassword)) {
@@ -199,7 +202,7 @@ app.use((err, _req, res, _next) => {
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`BIOB90 rubric listening on port ${port}; database: ${dbPath}`);
-  if (adminPassword === "change-me") console.warn("ADMIN_PASSWORD is not set. Set it before deploying.");
+  if (!adminPassword) console.warn("ADMIN_PASSWORD is not set. Organizer access is disabled.");
 });
 
 module.exports = app;
