@@ -2,7 +2,7 @@
 
 A mobile-friendly digital version of the BIOB90 Biology Integrative Research Poster Project judging rubric. The landing page provides separate student, judge, and course-instructor paths. Students can view and print the complete rubric, judge assignment lookup is ready to be connected to a future schedule, and instructors can review results or export them as CSV from a password-protected dashboard.
 
-The student view highlights that at least 16 of the 20 rubric criteria must receive a Yes as one of the requirements for passing BIOB90.
+The student view explains that every poster is evaluated by two judges and must receive at least 16 Yes responses out of 20 from each judge as one of the requirements for passing BIOB90.
 
 Judge drafts autosave after every change, and completed submissions are stored in an atomic JSON datastore on the persistent volume.
 
